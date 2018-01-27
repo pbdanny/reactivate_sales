@@ -1,0 +1,86 @@
+# Initialise Project
+```{r adjust_directory_if_needed}
+# Uncomment lines below if rmd file is placed in a subdirectory
+# library(knitr)
+# opts_knit$set(root.dir = normalizePath('../')) 
+```
+
+```{r load_project, echo = FALSE, message = FALSE}
+# 1. Set options in config/global.dcf
+# 2. Load packages listed in config/global.dcf
+# 3. Import functions and coe in lib directory
+# 4. Load data in data directory
+# 5. Run data manipulations in munge directory 
+
+rm(list = ls()) # optionally refresh workspace
+library(ProjectTemplate); load.project()
+```             
+
+# Explore
+```{r explore, echo = FALSE}
+# total obs
+cat("Total observations : ", nrow(check_oss))
+
+# new to ktc
+new <- check_oss[is.na(check_oss$SM),]
+
+# check no duplicate new to ktc 
+cat("\nIs there unique name_surname in obs? :", 
+    nrow(new) == length(unique(new$name_surname)))
+
+# history with ktc
+ex_ktc <- check_oss[!is.na(check_oss$SM),]
+
+# check is there duplicate ex-ktc
+cat("\nIs there unique name_surname in ex ktc obs? :", 
+    nrow(ex_ktc) == length(unique(ex_ktc$name_surname)))
+
+# no of observation in ex-ktc
+cat("\nNo. of observation in ex-ktc : ", 
+    nrow(ex_ktc))
+
+# no of unique name ex-ktc
+cat("\nNo. of unique name_surname in ex-ktc : ", 
+    length(unique(ex_ktc$name_surname)))
+
+# % of ex-ktc to total
+cat("\nPortion of ex_ktc to all interested : ",
+    length(unique(ex_ktc$name_surname))/length(unique(check_oss$name_surname)))
+```
+
+## Explore on Ex-ktc features
+```{r ex ktc, echo = FALSE}
+# Show ex ktc data
+View(ex_ktc[order(ex_ktc$name_surname, ex_ktc$OpenDate, decreasing = TRUE),])
+
+# some of them is TL
+View(ex_ktc[ex_ktc$TL_Code == '-1',])
+
+# find latest status of agent
+# creat df of lastest update data
+name_last_date <- ex_ktc %>%
+    group_by(name_surname) %>%
+    summarise(last_date = max(OpenDate), time_regis = n())
+
+# left join ex_ktc with latest date and name for latest data
+ex_last_date <- ex_ktc %>%
+    inner_join(name_last_date, by = c("name_surname", "OpenDate" = "last_date"))
+
+# Number of lastest as TL
+cat("No of TL : ", 
+    sum(substr(ex_last_date$Agent_Code, 1, 1) == "4"))
+
+# proportion of agent status interested
+prop.table(table(ex_last_date$Status))
+
+# table of agent status & year interested
+table(format(ex_last_date$OpenDate, format = "%Y"), 
+      ex_last_date$Status)
+
+# check if the interested agent just open / re-activate in 2017
+ex_last_date %>%
+    filter(format(OpenDate, "%Y") == "2017") %>%
+    mutate(month_open = format(OpenDate, format = "%m")) %>%
+    group_by(month_open) %>%
+    summarise(n = n())
+```

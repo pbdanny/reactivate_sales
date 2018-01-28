@@ -26,3 +26,6 @@
 library(ProjectTemplate); load.project(list(munging=FALSE, data_loading = FALSE))
 check_oss <- read_csv(file = file.path("raw-data","check_oss.txt"))
 write_csv(check_oss, path = file.path("data","check_oss.csv"))
+
+perf <- read_csv(file = file.path("raw-data", "tbl_sales_n_open_cc_pl_active.txt"))
+write_csv(perf, path = file.path("data","perf.csv"))

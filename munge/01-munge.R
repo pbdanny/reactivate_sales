@@ -13,3 +13,5 @@ rm(check.oss)
 colnames(check_oss) <- make.names(colnames(check_oss))
 check_oss$OpenDate <- strptime(check_oss$OpenDate, format = "%d/%m/%Y %H:%M:%S")
 check_oss$OpenDate <- as.POSIXct(check_oss$OpenDate)
+
+colnames(perf) <- make.names(colnames(perf))

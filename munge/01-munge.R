@@ -15,3 +15,8 @@ check_oss$OpenDate <- strptime(check_oss$OpenDate, format = "%d/%m/%Y %H:%M:%S")
 check_oss$OpenDate <- as.POSIXct(check_oss$OpenDate)
 
 colnames(perf) <- make.names(colnames(perf))
+
+sales_cw <- sales.cw
+rm(sales.cw)
+colnames(sales_cw) <- make.names(colnames(sales_cw))
+sales_cw[sales_cw$Status == "c",]$Status <- "C"

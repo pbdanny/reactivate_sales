@@ -29,3 +29,6 @@ write_csv(check_oss, path = file.path("data","check_oss.csv"))
 
 perf <- read_csv(file = file.path("raw-data", "tbl_sales_n_open_cc_pl_active.txt"))
 write_csv(perf, path = file.path("data","perf.csv"))
+
+sales_cw <- read_csv(file = file.path("raw-data", "qry_sales_cw.txt"))
+write_csv(sales_cw, path = file.path("data", "sales_cw.csv"))
